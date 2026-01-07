@@ -1,5 +1,5 @@
 import axios from "axios";
-import type { Product } from "./ProductTypes";
+import type { Product } from "./productTypes";
 
 const BASE_URL = "https://dummyjson.com/products";
 
@@ -16,7 +16,7 @@ export const addProductAPI = (data: Partial<Product>) =>
   axios.post(`${BASE_URL}/add`, data);
 
 export const updateProductAPI = (id: number, data: Partial<Product>) =>
-  axios.put(`${BASE_URL}/${id}`, data);
+  axios.patch(`${BASE_URL}/${id}`, data);
 
 export const deleteProductAPI = (id: number) =>
   axios.delete(`${BASE_URL}/${id}`);

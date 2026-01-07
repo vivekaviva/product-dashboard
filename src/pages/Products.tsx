@@ -24,10 +24,10 @@ const ProductsList = () => {
 
   // Initial fetch & pagination
   useEffect(() => {
-    if (products.length === 0 && !debouncedSearch) {
+    if (!debouncedSearch && products.every((p) => !p.isLocal)) {
       dispatch(fetchProducts({ limit, skip: 0 }));
     }
-  }, [dispatch, products.length, debouncedSearch, limit]);
+  }, [dispatch, debouncedSearch, limit]);
 
   // Debounced search
   useEffect(() => {

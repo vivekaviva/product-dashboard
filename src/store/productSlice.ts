@@ -1,5 +1,5 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import type { ProductsState, Product } from "./ProductTypes";
+import type { ProductsState, Product } from "./productTypes";
 import {
   fetchProductsAPI,
   searchProductsAPI,
@@ -56,7 +56,9 @@ export const addProduct = createAsyncThunk(
 export const updateProduct = createAsyncThunk(
   "products/updateProduct",
   async ({ id, data }: { id: number; data: Partial<Product> }) => {
+    console.log("updateProductAPI", updateProductAPI);
     const response = await updateProductAPI(id, data);
+    console.log("update response", response.data);
     return response.data;
   }
 );
@@ -86,20 +88,45 @@ const productsSlice = createSlice({
       })
       .addCase(fetchProducts.fulfilled, (state, action) => {
         state.listLoading = false;
-        state.products = action.payload.products;
-        state.total = action.payload.total;
+
+        const apiProducts = action.payload.products;
+
+        // 🔥 Keep local products
+        const localProducts = state.products.filter((p) => p.isLocal);
+
+        state.products =
+          state.skip === 0
+            ? [...localProducts, ...apiProducts]
+            : [...state.products, ...apiProducts];
+
+        state.total = action.payload.total + localProducts.length;
         state.skip = action.payload.skip;
       })
+      // .addCase(fetchProducts.fulfilled, (state, action) => {
+      //   state.listLoading = false;
+      //   state.products = action.payload.products;
+      //   state.total = action.payload.total;
+      //   state.skip = action.payload.skip;
+      // })
       .addCase(fetchProducts.rejected, (state, action) => {
         state.listLoading = false;
         state.error = action.error.message || "Failed to fetch products";
       })
 
       // Search
+      // .addCase(searchProducts.fulfilled, (state, action) => {
+      //   state.listLoading = false;
+      //   state.products = action.payload.products;
+      //   state.total = action.payload.total;
+      //   state.skip = 0;
+      // })
       .addCase(searchProducts.fulfilled, (state, action) => {
         state.listLoading = false;
-        state.products = action.payload.products;
-        state.total = action.payload.total;
+
+        const localProducts = state.products.filter((p) => p.isLocal);
+
+        state.products = [...localProducts, ...action.payload.products];
+        state.total = action.payload.total + localProducts.length;
         state.skip = 0;
       })
       .addCase(searchProducts.pending, (state) => {
@@ -119,22 +146,55 @@ const productsSlice = createSlice({
       })
 
       // Add
+
       .addCase(addProduct.fulfilled, (state, action) => {
-        state.products.unshift(action.payload);
+        const maxId =
+          state.products.length > 0
+            ? Math.max(...state.products.map((p) => p.id))
+            : 0;
+
+        const newProduct = {
+          ...action.payload,
+          id: maxId + 1,
+          isLocal: true,
+        };
+
+        state.products.push(newProduct);
         state.total += 1;
       })
+      // .addCase(addProduct.fulfilled, (state, action) => {
+      //   state.products.unshift(action.payload);
+      //   state.total += 1;
+      // })
       // .addCase(addProduct.fulfilled, (state, action) => {
       //   state.products.unshift(action.payload);
       // })
 
       // Update
+      .addCase(updateProduct.pending, (state) => {
+        state.detailLoading = true;
+      })
+
       .addCase(updateProduct.fulfilled, (state, action) => {
-        const index = state.products.findIndex(
-          (p) => p.id === action.payload.id
-        );
+        state.detailLoading = false;
+
+        const updated = {
+          ...action.payload,
+          isLocal: true,
+        };
+
+        // update list
+        const index = state.products.findIndex((p) => p.id === updated.id);
         if (index !== -1) {
-          state.products[index] = action.payload;
+          state.products[index] = updated;
         }
+
+        // update product view
+        state.selectedProduct = updated;
+      })
+
+      .addCase(updateProduct.rejected, (state) => {
+        state.detailLoading = false;
       })
 
       // Delete

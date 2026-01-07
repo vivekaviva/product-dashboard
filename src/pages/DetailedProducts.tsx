@@ -13,14 +13,24 @@ const DetailedProduct = () => {
   const { selectedProduct, detailLoading } = useAppSelector(
     (state) => state.products
   );
+  // useEffect(() => {
+  //   if (id) {
+  //     dispatch(fetchProductById(Number(id)));
+  //   }
+  //   return () => {
+  //     dispatch(resetSelectedProduct());
+  //   };
+  // }, [dispatch, id]);
+
   useEffect(() => {
-    if (id) {
+    if (!id) return;
+
+    // 🔥 Only fetch if product is NOT already in store
+    if (!selectedProduct || selectedProduct.id !== Number(id)) {
       dispatch(fetchProductById(Number(id)));
     }
-    return () => {
-      dispatch(resetSelectedProduct());
-    };
-  }, [dispatch, id]);
+  }, [dispatch, id, selectedProduct]);
+
   console.log(id);
   console.log(selectedProduct);
   if (detailLoading || !selectedProduct) {
@@ -43,7 +53,7 @@ const DetailedProduct = () => {
           <ProductCard
             product={selectedProduct}
             variant="detail"
-            onEdit={() => navigate(`/products/${selectedProduct.id}/edit`)}
+            onEdit={() => navigate(`/product/${selectedProduct.id}/edit`)}
           />
         </div>
       </div>
