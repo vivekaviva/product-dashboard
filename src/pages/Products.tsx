@@ -50,6 +50,10 @@ const ProductsList = () => {
     }
   };
 
+  const addNewProduct = () => {
+    navigate("/product/add");
+  };
+
   return (
     <div className="container mt-4 mb-4">
       <div className="d-flex justify-content-between align-items-center mb-3">
@@ -62,6 +66,10 @@ const ProductsList = () => {
           value={searchText}
           onChange={(e) => setSearchText(e.target.value)}
         />
+        <button className="btn btn-primary" onClick={addNewProduct}>
+          {" "}
+          Add New Product
+        </button>
       </div>
 
       {listLoading && <Loader />}

@@ -90,18 +90,43 @@ const productsSlice = createSlice({
         state.listLoading = false;
 
         const apiProducts = action.payload.products;
-
-        // 🔥 Keep local products
         const localProducts = state.products.filter((p) => p.isLocal);
 
-        state.products =
-          state.skip === 0
-            ? [...localProducts, ...apiProducts]
-            : [...state.products, ...apiProducts];
+        // IDs already in local products
+        const localIds = new Set(localProducts.map((p) => p.id));
+
+        // Filter API products to avoid duplication
+        const filteredApiProducts = apiProducts.filter(
+          (p) => !localIds.has(p.id)
+        );
+
+        if (state.skip === 0) {
+          // NEW PRODUCTS FIRST
+          state.products = [...localProducts, ...filteredApiProducts];
+        } else {
+          state.products = [...state.products, ...filteredApiProducts];
+        }
 
         state.total = action.payload.total + localProducts.length;
         state.skip = action.payload.skip;
       })
+
+      // .addCase(fetchProducts.fulfilled, (state, action) => {
+      //   state.listLoading = false;
+
+      //   const apiProducts = action.payload.products;
+
+      //   // local products
+      //   const localProducts = state.products.filter((p) => p.isLocal);
+
+      //   state.products =
+      //     state.skip === 0
+      //       ? [...localProducts, ...apiProducts]
+      //       : [...state.products, ...apiProducts];
+
+      //   state.total = action.payload.total + localProducts.length;
+      //   state.skip = action.payload.skip;
+      // })
       // .addCase(fetchProducts.fulfilled, (state, action) => {
       //   state.listLoading = false;
       //   state.products = action.payload.products;

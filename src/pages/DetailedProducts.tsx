@@ -25,7 +25,7 @@ const DetailedProduct = () => {
   useEffect(() => {
     if (!id) return;
 
-    // 🔥 Only fetch if product is NOT already in store
+    //  Only fetch if product is NOT already in store
     if (!selectedProduct || selectedProduct.id !== Number(id)) {
       dispatch(fetchProductById(Number(id)));
     }

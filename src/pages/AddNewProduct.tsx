@@ -6,7 +6,7 @@ import ProductForm from "../components/ProductForm";
 const ProductAdd = () => {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
-  const { loading } = useAppSelector((state) => state.products);
+  const { listLoading } = useAppSelector((state) => state.products);
 
   const handleAdd = async (data: any) => {
     await dispatch(addProduct(data));
@@ -17,7 +17,7 @@ const ProductAdd = () => {
     <div className="container mt-4">
       <h3 className="mb-3">Add Product</h3>
 
-      <ProductForm onSubmit={handleAdd} isSubmitting={loading} />
+      <ProductForm onSubmit={handleAdd} isSubmitting={listLoading} />
     </div>
   );
 };

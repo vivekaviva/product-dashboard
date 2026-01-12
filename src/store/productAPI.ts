@@ -16,7 +16,7 @@ export const addProductAPI = (data: Partial<Product>) =>
   axios.post(`${BASE_URL}/add`, data);
 
 export const updateProductAPI = (id: number, data: Partial<Product>) =>
-  axios.patch(`${BASE_URL}/${id}`, data);
+  axios.put(`${BASE_URL}/${id}`, data);
 
 export const deleteProductAPI = (id: number) =>
   axios.delete(`${BASE_URL}/${id}`);
