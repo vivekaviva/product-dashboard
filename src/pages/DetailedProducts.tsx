@@ -44,7 +44,7 @@ const DetailedProduct = () => {
   console.log("discountPrice", discountPrice);
   return (
     <div className="container mt-4">
-      <button className="btn btn-link mb-3" onClick={() => navigate(-1)}>
+      <button className="btn btn-link mb-3" onClick={() => navigate("/")}>
         ← Back
       </button>
 

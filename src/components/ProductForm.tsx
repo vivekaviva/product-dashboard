@@ -54,41 +54,46 @@ const ProductForm = ({
         <label className="form-label">Price</label>
         <input
           type="number"
+          step="0.01"
           className={`form-control ${errors.price ? "is-invalid" : ""}`}
           {...register("price", {
             required: "Price is required",
             min: {
-              value: 1,
-              message: "Price must be at least 1",
+              value: 0.01,
+              message: "Price must be greater than 0",
             },
+            validate: (value) =>
+              /^\d+(\.\d{1,2})?$/.test(String(value)) ||
+              "Only up to 2 decimal places allowed",
           })}
         />
         <div className="invalid-feedback">{errors.price?.message}</div>
       </div>
 
       {/* Discount */}
-      <div className="col-md-6 mb-3">
-        <label className="form-label">Discount %</label>
-        <input
-          type="number"
-          className={`form-control ${
-            errors.discountPercentage ? "is-invalid" : ""
-          }`}
-          {...register("discountPercentage", {
-            required: "Discount is required",
-            min: {
-              value: 0,
-              message: "Discount cannot be negative",
-            },
-            max: {
-              value: 100,
-              message: "Discount cannot exceed 100%",
-            },
-          })}
-        />
-        <div className="invalid-feedback">
-          {errors.discountPercentage?.message}
-        </div>
+      <input
+        type="number"
+        step="0.01"
+        className={`form-control ${
+          errors.discountPercentage ? "is-invalid" : ""
+        }`}
+        {...register("discountPercentage", {
+          required: "Discount is required",
+          min: {
+            value: 0,
+            message: "Discount cannot be negative",
+          },
+          max: {
+            value: 100,
+            message: "Discount cannot exceed 100%",
+          },
+          validate: (value) =>
+            /^\d+(\.\d{1,2})?$/.test(String(value)) ||
+            "Only up to 2 decimal places allowed",
+        })}
+      />
+      <div className="invalid-feedback">
+        {errors.discountPercentage?.message}
       </div>
 
       {/* Thumbnail */}
